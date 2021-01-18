@@ -14,7 +14,10 @@ class Ampel(object):
 
     def __init__ (self):
         self.zustand = False    
-        self.timer = Timer.Timer()
+        self.timer = Timer.Stoppuhr(1)
+        self.rotphaselaenge = []
+        self.gruenphaselaenge = []
+        self.index = 0
 
     def umschalten(self):
         if(self.zusatnd):

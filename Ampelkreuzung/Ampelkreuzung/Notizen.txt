@@ -1,0 +1,12 @@
+#A1 = grunphasenlaenge[2] * 0.8 + grunphasenlaenge[3] + 1 - grunphasenlaenge[0] *  0.8
+
+#jede ampel braucht timer der immer gestartet wird wenn die ampel umschaltet
+
+#warteschlangeA11  0
+#warteschlangeA12  1
+#warteschlangeA21  2
+#warteschlangeA22  3
+#warteschlangeB11  4
+#warteschlangeB12  5
+#warteschlangeB21  6
+#warteschlangeB22  7

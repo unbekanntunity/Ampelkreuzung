@@ -25,9 +25,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ampelkreuzung.py" />
+    <Compile Include="Timer.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Warteschlange.py">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Notizen.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

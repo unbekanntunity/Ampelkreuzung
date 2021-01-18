@@ -1,37 +1,77 @@
 #-------------------------------------------------------------------------------
-# Name:        Ampelkreuzung
-# Purpose:     Simulation einer Ampel
+# Name: Ampelkreuzung
+# Purpose: Simulation einer Ampel
 #
-# Author:      T.nguyen, T. Rothe 
+# Author: T.nguyen, T.  Rothe
 #
-# Created:     13.01.2020
-# Copyright:   (c) an.nguyen 2020
-# Licence:     <your licence>
+# Created: 13.01.2020
+# Copyright: (c) an.nguyen 2020
+# Licence: <your licence>
 #-------------------------------------------------------------------------------
-import Timer 
+
 import Ampel 
 import Warteschlange 
+import random
+import Timer
 
-anstellWahrscheinlichkeit = 0.5
-maxdurchlaufe = 10
-grunphasenlaenge = [ 5 , 3 , 5 , 3 ]
+class Ampelkreuzung(object):
 
-#A1 = grunphasenlaenge[2] * 0.8 + grunphasenlaenge[3] + 1 - grunphasenlaenge[0] *  0.8
+    def __init__(self):
+        self.anstellWahrscheinlichkeit = 0.5
+        self.maxdurchlaufe = 10
+        self.anzahlWarteschlangen = 8
+        self.anzahlAmpeln = 8
 
-#jede ampel braucht timer der immer gestartet wird wenn die ampel umschaltet
+        self.gruenphasenlaenge = [5 , 3 , 5 , 3]
+        self.rotphasenlaenge = []
+        self.warteschlangen = []
+        self.ampeln = []
 
-#warteschlangeA11  0
-#warteschlangeA12  1
-#warteschlangeA21  2
-#warteschlangeA22  3
-#warteschlangeB11  4
-#warteschlangeB12  5
-#warteschlangeB21  6
-#warteschlangeB22  7
+        self.stoppuhr = Timer.Stoppuhr(1)
+        self.stoppuhr.ampelkreuzung = self
+        self.nummer = 0
+        
+        for self.warteschlangeIndex in range(self.anzahlWarteschlangen):
+            self.warteschlange = Warteschlange.Warteschlange()
+            self.warteschlangen.append(self.warteschlange)
 
-anzahlWarteschlangen = 8
-warteschlangen = []
+        for ampelIndex in range(self.anzahlAmpeln):
+            ampel = Ampel.Ampel()
+            if len(self.gruenphasenlaenge) > 1:
+                for i in range(len(self.gruenphasenlaenge)):
+                    if ampelIndex < 4 and i % 2 == 0:
+                        ampel.gruenphaselaenge.append(self.gruenphasenlaenge[i])
+                    elif ampelIndex >= 4 and i % 1 == 1:
+                        ampel.gruenphaselaenge.append(self.gruenphasenlaenge[i])
 
-for warteschlange in range(anzahlWarteschlangen):
-    warteschlange = Warteschlange.Warteschlange()
-    warteschlangen.append(warteschlange)
+                    try:
+                        ampel.rotphaselaenge.append(self.gruenphasenlaenge[i + 1])
+                    except:
+                        ampel.rotphaselaenge.append(self.gruenphasenlaenge[i - 1])
+            else:
+                ampel.gruenphaselaenge = self.gruenphasenlaenge[0]
+                ampel.rotphaselaenge = self.gruenphasenlaenge[0]
+            self.ampeln.append(ampel)
+
+        self.stoppuhr.start()
+        
+        done = False
+
+        while(done == False):
+            eingabe = input("Um zu beenden einfach eine Taste drücken")
+            if eingabe == "":
+                done = True
+
+        print(self.stoppuhr.zeit())
+        self.stoppuhr.finish()
+        
+    def Autoanstellen(self):
+        for warteschlange in self.warteschlangen:
+            self.nummer = random.random()
+            print(self.nummer)
+            if self.nummer <= self.anstellWahrscheinlichkeit:
+                warteschlange.anhaengen(2)
+                print(f"{warteschlange.schlange[0]} || {self.nummer}")
+            
+
+ampelkreuzungstart = Ampelkreuzung()

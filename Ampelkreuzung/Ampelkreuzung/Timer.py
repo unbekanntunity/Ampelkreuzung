@@ -11,28 +11,31 @@
 
 import time as t
 import threading as thread
+import Warteschlange
 
-class Timer(thread.Thread):
+class Stoppuhr(thread.Thread):
 
-    def __init__(self, interval=0.001):
+    def __init__(self, intervall = 0.001):
         thread.Thread.__init__(self)
-        self.interval = interval  
+        self.intervall = intervall
+        self.ampelkreuzung = None
         self.value = 0
         self.alive = False
 
     def run(self):
         self.alive = True
         while self.alive:
-            t.sleep(self.interval)
-            self.value += self.interval
-
-    def reset(self):
-        self.value = 0
-
-    def peek(self):
-        return self.value
+            t.sleep(self.intervall)
+            self.value += self.intervall
+            self.ampelkreuzung.Autoanstellen()
+            
 
     def finish(self):
         self.alive = False
         return self.value
 
+    def zuruecksetzen(self):
+        self.value = 0
+
+    def zeit(self):
+        return self.value
