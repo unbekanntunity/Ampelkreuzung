@@ -2,11 +2,51 @@
 
 #jede ampel braucht timer der immer gestartet wird wenn die ampel umschaltet
 
-#warteschlangeA11  0
-#warteschlangeA12  1
-#warteschlangeA21  2
-#warteschlangeA22  3
-#warteschlangeB11  4
-#warteschlangeB12  5
-#warteschlangeB21  6
-#warteschlangeB22  7
+#Straße A
+#warteschlangeA11  0 (mittlere)
+#warteschlangeA21  1 (mitte) gegenüber zu 0
+#warteschlangeA12  2 (links)
+#warteschlangeA22  3 (links)
+
+#Straße B
+#warteschlangeB11  4 (mitte)
+#warteschlangeB21  5 (mitte) gegenüber zu 4
+#warteschlangeB12  6 (links)
+#warteschlangeB22  7 (links)
+
+mitte = 5
+seiten = 3
+
+self.ampeln
+mitteA = ((linksA) - (mittlereA - (mitlereA * 0.8)) + (((linksB) - (mittlereB - (mitlereB * 0.8)) + mittlereB) 
+mitteA = ((2) - (0 - (0 * 0.8)) + (((6) - (4- (4* 0.8)) + 4) 
+mitteA11 = (([i + 2]) - ([i] - ([i] * [0.8])) + ((([i + 6]) - ([i + 4]- ([i + 4]* 0.8)) + [i+4]) i = 0
+mitteA21 = mitteA11
+ampel[0] && ampel[1]
+
+mitteB = ((linksB) - (mittlereB - (mitlereB * 0.8)) + (((linksA) - (mittlereA - (mitlereA * 0.8)) + mittlereA)
+mitteB = ((6) - (4 - (4 * 0.8)) + (((2) - (0 - (0 * 0.8)) + 0)
+mitteB11 = (([i + 2]) - ([i] - ([i] * 0.8)) + ((([i - 2]) - ([i - 4] - ([i - 4] * 0.8)) + [i-4]) i = 4
+mitteB21 = mittB11
+ampel[4] && ampel[5]
+
+if i == 0:
+    ampeln[i] = (([i + 2]) - ([i] - ([i] * [0.8])) + ((([i + 6]) - ([i + 4]- ([i + 4]* 0.8)) + [i+4]) 
+    ampeln[i + 1] = ampeln[i]
+elif i == 2:
+    ampeln[i] = 0.8*[i + 2]    + (0.8*[i - 2]    +  [i + 4]  
+elif i == 4:
+    ampeln[i] = (([i + 2]) - ([i] - ([i] * 0.8)) + ((([i - 2]) - ([i - 4] - ([i - 4] * 0.8)) + [i-4]) 
+    ampeln[i + 1] = ampeln[i]
+elif i == 6:
+    ampeln[i] = 0.8*[i - 2]    + (0.8*[i - 6]  +  [i - 4]  
+
+//////linksA = 0,8*mitteA + (0,8*mitteB + linksB)///////
+//////linksB = 0,8*mitteB + (0,8*mitteA + linksA)///////
+//////                                           ///////
+//////ampel: 2,3                                 ///////
+//////linksA = 0.8*[0]    + (0.8*[4]    +  [6]  )/////// i = 2
+//////                                           ///////
+//////ampel: 6,7                                 /////// 
+//////linksA = 0.8*[4]    + (0.8*[0]    +  [2]  )/////// i = 6
+

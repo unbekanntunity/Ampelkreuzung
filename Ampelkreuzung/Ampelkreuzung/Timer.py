@@ -18,8 +18,8 @@ class Stoppuhr(thread.Thread):
     def __init__(self, intervall = 0.001):
         thread.Thread.__init__(self)
         self.intervall = intervall
-        self.ampelkreuzung = None
         self.value = 0
+        self.ampelkreuzung = None
         self.alive = False
 
     def run(self):
@@ -27,7 +27,9 @@ class Stoppuhr(thread.Thread):
         while self.alive:
             t.sleep(self.intervall)
             self.value += self.intervall
-            self.ampelkreuzung.Autoanstellen()
+            if(self.ampelkreuzung != None):
+                self.ampelkreuzung.Autoanstellen()
+                self.ampelkreuzung.Ausgabe()
             
 
     def finish(self):

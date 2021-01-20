@@ -2,7 +2,7 @@
 # Name:        Warteschlange
 # Purpose:     Allgemeines Objekt für eine Wartscheschlange
 #
-# Author:      t.nguyen
+# Author:      T.nguyen, T. Rothe 
 #
 # Created:     09.12.2020
 # Copyright:   (c) an.nguyen 2020
@@ -13,6 +13,7 @@ class Warteschlange(object):
 
     def __init__(self):
         self.schlange = []
+        self.warteschlangename = []
 
     def anhaengen(self, laenge):
         self.schlange.append(laenge)

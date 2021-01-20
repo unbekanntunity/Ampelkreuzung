@@ -10,21 +10,37 @@
 #-------------------------------------------------------------------------------
 import Timer 
 
-class Ampel(object):
+import threading as thread
+
+class Ampel(thread.Thread):
 
     def __init__ (self):
-        self.zustand = False    
+        thread.Thread.__init__(self)
         self.timer = Timer.Stoppuhr(1)
-        self.rotphaselaenge = []
-        self.gruenphaselaenge = []
+        self.alive = False
+        self.zustand = False    
+        self.rotphasenlaenge = []
+        self.gruenphasenlaenge = []
+        self.ampelname = ""
         self.index = 0
 
     def umschalten(self):
-        if(self.zusatnd):
-            self.zusatnd = False
-            self.timer.reset()
+        if(self.zustand):
+            self.zustand = False
+            self.timer.zuruecksetzen()
         else:
-            self.zusatnd = True
-            self.timer.reset()
+            self.zustand = True
+            self.timer.zuruecksetzen()
     
-    
+    def run(self):
+        self.alive = True
+        self.timer.start()
+        while(self.alive):
+            if(self.zustand == True and self.timer.zeit() >= self.gruenphasenlaenge[0]):
+                self.umschalten()
+            elif(self.zustand == False and self.timer.zeit() >= self.rotphasenlaenge[0]):
+                self.umschalten()
+
+    def finish(self):
+        self.alive = False
+        self.timer.finish()
