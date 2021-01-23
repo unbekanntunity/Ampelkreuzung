@@ -26,9 +26,11 @@ class Ampel(thread.Thread):
 
     def umschalten(self):
         if(self.zustand):
+            self.indexerhoehen()
             self.zustand = False
             self.timer.zuruecksetzen()
         else:
+            self.indexerhoehen()
             self.zustand = True
             self.timer.zuruecksetzen()
     
@@ -36,10 +38,16 @@ class Ampel(thread.Thread):
         self.alive = True
         self.timer.start()
         while(self.alive):
-            if(self.zustand == True and self.timer.zeit() >= self.gruenphasenlaenge[0]):
+            if(self.zustand == True and self.timer.zeit() >= self.gruenphasenlaenge[self.index]):
                 self.umschalten()
-            elif(self.zustand == False and self.timer.zeit() >= self.rotphasenlaenge[0]):
+            elif(self.zustand == False and self.timer.zeit() >= self.rotphasenlaenge[self.index]):
                 self.umschalten()
+
+    def indexerhoehen(self):
+        if(self.index < (len(self.gruenphasenlaenge) - 1)):
+            self.index += 1
+        else:
+            self.index = 1
 
     def finish(self):
         self.alive = False
