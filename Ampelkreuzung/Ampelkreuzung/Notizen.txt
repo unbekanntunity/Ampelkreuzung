@@ -1,5 +1,3 @@
-#A1 = grunphasenlaenge[2] * 0.8 + grunphasenlaenge[3] + 1 - grunphasenlaenge[0] *  0.8
-
 #jede ampel braucht timer der immer gestartet wird wenn die ampel umschaltet
 
 #Straße A
@@ -14,8 +12,7 @@
 #warteschlangeB12  6 (links)
 #warteschlangeB22  7 (links)
 
-mitte = 5
-seiten = 3
+#A1 = grunphasenlaenge[2] * 0.8 + grunphasenlaenge[3] + 1 - grunphasenlaenge[0] *  0.8
 
 self.ampeln
 mitteA = ((linksA) - (mittlereA - (mitlereA * 0.8)) + (((linksB) - (mittlereB - (mitlereB * 0.8)) + mittlereB) 
@@ -50,29 +47,28 @@ elif i == 6:
 //////ampel: 6,7                                 /////// 
 //////linksA = 0.8*[4]    + (0.8*[0]    +  [2]  )/////// i = 6
 
-Restcode:
-
-    #Eingabe für die Grünüphasenlängen
-        index = 0
-        print("Um die Eingabe zu beenden einfach `e` eintippen")
-        while(self.done == False):
-            
-            self.eingabe = input(f"Ampel {index + 1}: ")
-            print("")
-
-            if(self.eingabe == "e" and len(self.gruenphasenlaenge) > 0):
-                self.eingabe = ""
-                break
-            
-            if(index == 3):
-                index = 0
-            else: 
-                index += 1
-            try:
-                self.gruenphasenlaenge.append(int(self.eingabe))
-            except :
-                print("Bitte nur ganze Zahlen oder `e` eingeben")
-
-    self.anstellwahrscheinlichkeit = float(input(f"\nWahrscheinlichkeit der Autos:"))
-    self.sekundenProAuto = int(input("\nDurchschnittliche Dauer pro Auto:"))
-    self.verzoegerung = int(input("\nVerzögerung der Seitenspuren zur der Spur in der Mitte:"))
+Restcode von ersten versuchen:
+/
+/       Eingabe für die Grünüphasenlängen
+/         index = 0
+/           print("Um die Eingabe zu beenden einfach `e` eintippen")
+/         while(self.done == False):
+/           
+/             self.eingabe = input(f"Ampel {index + 1}: ")
+/              print("")
+/
+/             if(self.eingabe == "e" and len(self.gruenphasenlaenge) > 0):
+/                  self.eingabe = ""
+/                  break
+/           
+/             if(index == 3):
+/                 index = 0
+/              else: 
+/                  index += 1
+/               try:
+/                self.gruenphasenlaenge.append(int(self.eingabe))
+/               except :
+/                   print("Bitte nur ganze Zahlen oder `e` eingeben")
+/     self.anstellwahrscheinlichkeit = float(input(f"\nWahrscheinlichkeit der Autos:"))
+/     self.sekundenProAuto = int(input("\nDurchschnittliche Dauer pro Auto:"))
+/     self.verzoegerung = int(input("\nVerzögerung der Seitenspuren zur der Spur in der Mitte:"))
