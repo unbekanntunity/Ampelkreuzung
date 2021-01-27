@@ -20,7 +20,6 @@ class Ampelkreuzung(object):
     Sie besitzt neben den Simulationsprozess auch ein kleines Interface.
     """
 
-
     def __init__(self):
         self.sekundenProAuto = 2
         self.anstellwahrscheinlichkeit = 0.5
@@ -208,7 +207,7 @@ class Ampelkreuzung(object):
         if(self.fertig == False):
             self.einstellungen()
 
-    #Eine Eingabeschleife, die Eingabe des Benutzers in ein Array speichert und erst abgebrochen wird, wenn der Benutzer den Buchstaben `e` eingibt
+    #Eine Eingabeschleife, die Eingabe des Benutzers in einer Liste speichert und erst abgebrochen wird, wenn der Benutzer den Buchstaben `e` eingibt
     def gruenphasenlaengeBestimmen(self):
         index = 0
         self.eingabe = ""
@@ -293,7 +292,7 @@ class Ampelkreuzung(object):
             print(f"{self.warteschlangen[ampelIndex].warteschlangename}:  {self.warteschlangen[ampelIndex].schlange} \n")
         print("-" * 10)   
 
-    #Findet den kleinsten Faktor von der überprüfenden Zahl an und kann dann auch den Rest ausgeben
+    #Findet den kleinsten Faktor von der überprüfenden Zahl und den dazugehörigen Rest
     def faktorfinden(self, faktor, ueberpruefendezahl, restausgeben):
         durchlaeufe = 0;
         zahl = ueberpruefendezahl

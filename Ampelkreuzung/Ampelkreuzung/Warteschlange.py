@@ -18,7 +18,7 @@ class Warteschlange(object):
     Sind die Schlangen in denen die Autos anstehen.
     Jede Spur hat eine eigene Schlange.
     Das Abarbeiten geschieht mit Hilfe von Thread, da wir mit der Sleepfunktion arbeiten und sonst das Hauptprogramm beeinträchtigt wird.
-    Erst wenn der Thread fertig ist und das Element entfernt wurde, kann das nächste Element abgearbeitet werden
+    Erst wenn der Thread fertig ist und das Element entfernt wurde, kann das nächste Element abgearbeitet werden.
     """
 
     def __init__(self):
@@ -42,10 +42,6 @@ class Warteschlange(object):
     #Löscht bestimmte Elemente in der Liste 
     def loeschen(self, index):   
         self.schlange.pop(index)
-
-    #Gibt die Länge der Liste zurück
-    def getlen(self):         
-        return len(self.schlange)
 
     #Entfernt das erste Element(autos) aus der Warteschlange
     def abarbeiten(self):

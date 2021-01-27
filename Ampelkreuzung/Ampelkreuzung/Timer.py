@@ -18,7 +18,7 @@ class Stoppuhr(thread.Thread):
 
     """
     Eine Klasse für die Simulation einer Timer. 
-    Solange der Thread nicht mit der finish()-funktion geschlsosen wird, läuft der Thread in einer Schleife weiter.
+    Solange der Thread nicht mit der finish()-funktion geschlossen wird, läuft der Thread in einer Schleife weiter.
     Dort wiederholt sie folgende Schritte:
         - Erst wartet der Thread für eine gewissen Intervall
         - Dann wird die Zeit die gewartet wurde, zu die Variable `value`dazuaddiert
@@ -31,8 +31,7 @@ class Stoppuhr(thread.Thread):
         self.value = 0
         self.ampelkreuzung = None
         self.alive = False
-    
-    #
+
     def run(self):
         self.alive = True   
         self.letzterWert = self.value
