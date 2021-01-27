@@ -213,7 +213,7 @@ class Ampelkreuzung(object):
         self.eingabe = ""
         self.gruenphasenlaenge.clear()
         while(self.eingabeBeendet == False):
-            self.eingabe = input("\nAmpel {index + 1}: ")
+            self.eingabe = input(f"\nAmpel {index + 1}: ")
 
             if(self.eingabe == "e" and len(self.gruenphasenlaenge) > 0):
                 self.eingabe = ""
