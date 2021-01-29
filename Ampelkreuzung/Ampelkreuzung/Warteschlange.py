@@ -22,11 +22,14 @@ class Warteschlange(object):
     """
 
     def __init__(self):
-        self.anstellWahrscheinlichkeiten = 0.5
+        self.anstellwahrscheinlichkeit = 0.5
         self.abgearbeitetautos = 0
         self.warteschlangename = ""
         self.inprozess = False
         self.schlange = []
+
+    def anhaengen(self, element):
+        self.schlange.append(element)
 
     #Ermöglicht das Abarbeiten als Hintergrundaktion
     def abarbeitenstarten(self):

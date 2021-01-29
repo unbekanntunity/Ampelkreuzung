@@ -37,7 +37,7 @@ class Ampelkreuzung(object):
         self.optionen = [["Simulation starten", lambda: self.starten()],["Einstellungen", lambda: self.einstellungen()]]
 
         self.nummer = 0
-        self.durchlaeufe = 0
+        self.durchlaeufe = -1
         self.indexletztezahl = 0
         self.gruenphasendurchlauefe = 0
         self.eingabe = ""
@@ -89,10 +89,10 @@ class Ampelkreuzung(object):
         #Anstellwahrscheinlichkeiten
         if(len(self.anstellwahrscheinlichkeit) > 1):
             for warteschlangeIndex in range(len(self.warteschlangen)):
-                self.warteschlangen[warteschlangeIndex].anstellWahrscheinlichkeiten = self.anstellwahrscheinlichkeit[int(warteschlangeIndex / 4)]
+                self.warteschlangen[warteschlangeIndex].anstellwahrscheinlichkeit = self.anstellwahrscheinlichkeit[int(warteschlangeIndex / 4)]
         else:
             for warteschlangeIndex in range(len(self.warteschlangen)):
-                self.warteschlangen[warteschlangeIndex].anstellWahrscheinlichkeiten = self.anstellwahrscheinlichkeit[0]
+                self.warteschlangen[warteschlangeIndex].anstellwahrscheinlichkeit = self.anstellwahrscheinlichkeit[0]
 
         #Grünphasenkalkulation für den ersten Durchlauf
         for ampelindex in range(len(self.gruenphasenlaenge[:4])):
@@ -158,7 +158,7 @@ class Ampelkreuzung(object):
                 self.ausgabe()
                 self.stoppuhr2.zuruecksetzen()
 
-            if(self.ampeln[0].zustand == "Grün" and self.ampelNullGruen):
+            if(self.ampeln[0].zustand == "Rot" and self.ampelNullGruen):
                 self.durchlaeufe += 1
                 self.ampelNullGruen = False
 
@@ -294,7 +294,7 @@ class Ampelkreuzung(object):
         
         self.einstellungenOptionen =  [["Grünphasenlängen: ", self.gruenphasenlaenge , lambda: self.integerlisteaendern()], 
                                        ["Anstellwahrscheinlichkeit der Autos: ", self.anstellwahrscheinlichkeit, lambda: self.floatlisteaendern()],
-                                       ["Anstellintervall der Autos:", self.pruefinterall, lambda: self.integeraendern()],
+                                       ["Anstellintervall der Autos: ", self.pruefinterall, lambda: self.integeraendern()],
                                        ["Durchschnittliche Abarbeitungsdauer pro Auto: ", self.sekundenProAuto, lambda: self.integeraendern()],
                                        ["Verzögerung der seitlichen Ampeln: ", self.verzoegerung, lambda: self.floataendern()],
                                        ["Ausgaben pro Sekunde: ", self.ausgabegeschwindigkeit, lambda: self.floataendern()],
