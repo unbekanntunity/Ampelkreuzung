@@ -22,11 +22,11 @@ class Ampelkreuzung(object):
 
     def __init__(self):
         self.sekundenProAuto = 2
-        self.anstellwahrscheinlichkeit = 0.5
         self.maxdurchlaufe = 5
         self.verzoegerung = 0.8
         self.ausgabegeschwindigkeit = 0.5
 
+        self.anstellwahrscheinlichkeit =[0.5]
         self.gruenphasenlaenge = [3]
         self.rotphasenlaenge = []
         self.warteschlangen = []
@@ -37,7 +37,7 @@ class Ampelkreuzung(object):
         self.optionen = [["Simulation starten", lambda: self.starten()],["Einstellungen", lambda: self.einstellungen()]]
 
         self.nummer = 0
-        self.durchlaeufe = -1
+        self.durchlaeufe = 0
         self.indexletztezahl = 0
         self.gruenphasendurchlauefe = 0
         self.eingabe = ""
@@ -85,6 +85,14 @@ class Ampelkreuzung(object):
         elif(len(self.gruenphasenlaenge) == 1):
             for i in range(4 - 1):
                 self.gruenphasenlaenge.append(self.gruenphasenlaenge[0])
+
+        #Anstellwahrscheinlichkeiten
+        if(len(self.anstellwahrscheinlichkeit) > 1):
+            for warteschlangeIndex in range(len(self.warteschlangen)):
+                self.warteschlangen[warteschlangeIndex].anstellWahrscheinlichkeiten = self.anstellwahrscheinlichkeit[int(warteschlangeIndex / 4)]
+        else:
+            for warteschlangeIndex in range(len(self.warteschlangen)):
+                self.warteschlangen[warteschlangeIndex].anstellWahrscheinlichkeiten = self.anstellwahrscheinlichkeit[0]
 
         #Grünphasenkalkulation für den ersten Durchlauf
         for ampelindex in range(len(self.gruenphasenlaenge[:4])):
@@ -150,15 +158,15 @@ class Ampelkreuzung(object):
                 self.ausgabe()
                 self.stoppuhr2.zuruecksetzen()
 
+            if(self.ampeln[0].zustand == "Grün" and self.ampelNullGruen):
+                self.durchlaeufe += 1
+                self.ampelNullGruen = False
+
             for index in range(len(self.ampeln)):
                 if(self.ampeln[index].zustand == "Grün"):
                     self.warteschlangen[index].abarbeitenstarten()
                     if(index == 0):
                         self.ampelNullGruen = True
-
-            if(self.ampeln[0].zustand == "Rot" and self.ampelNullGruen):
-                self.durchlaeufe += 1
-                self.ampelNullGruen = False
 
             if(self.durchlaeufe == self.maxdurchlaufe):
                 self.fertig = True
@@ -208,26 +216,43 @@ class Ampelkreuzung(object):
             self.einstellungen()
 
     #Eine Eingabeschleife, die Eingabe des Benutzers in einer Liste speichert und erst abgebrochen wird, wenn der Benutzer den Buchstaben `e` eingibt
-    def gruenphasenlaengeBestimmen(self):
+    def integerlisteaendern(self):
         index = 0
-        self.eingabe = ""
-        self.gruenphasenlaenge.clear()
+        eingabe = ""
+        liste = []
+        
         while(self.eingabeBeendet == False):
-            self.eingabe = input(f"\nAmpel {index + 1}: ")
-
-            if(self.eingabe == "e" and len(self.gruenphasenlaenge) > 0):
-                self.eingabe = ""
-                self.eingabeBeendet = True
+            eingabe = input(f"\nIndex {index + 1}: ")
+            if(eingabe == "e" and len(self.gruenphasenlaenge) > 0):
+                return liste
             if(index == 3):
                 index = 0
             else: 
                 index += 1
             try:
-                self.gruenphasenlaenge.append(int(self.eingabe))
+                liste.append(int(eingabe))
             except:
                 print("Bitte nur ganze Zahlen oder `e` eingeben")
-                self.gruenphasenlaengeBestimmen()
-        self.einstellungen()  
+                self.listeaendern()
+
+    def floatlisteaendern(self):
+        index = 0
+        eingabe = ""
+        liste = []
+        
+        while(self.eingabeBeendet == False):
+            eingabe = input(f"\nIndex {index + 1}: ")
+            if(eingabe == "e" and len(self.gruenphasenlaenge) > 0):
+                return liste
+            if(index == 3):
+                index = 0
+            else: 
+                index += 1
+            try:
+                liste.append(float(eingabe))
+            except:
+                print("Bitte nur ganze Zahlen oder `e` eingeben")
+                self.listeaendern()
 
     #Funktionen, die die Eingabe des Benutzers zurückgeben, wenn diese den Typ entspricht
     def integeraendern(self):
@@ -267,8 +292,8 @@ class Ampelkreuzung(object):
             self.maxdurchlaufe = self.einstellungenOptionen[6][1]
             self.stoppuhr2 = Timer.Stoppuhr(self.ausgabegeschwindigkeit)
         
-        self.einstellungenOptionen =  [["Grünphasenlängen: ", self.gruenphasenlaenge , lambda: self.gruenphasenlaengeBestimmen()], 
-                                       ["Anstellwahrscheinlichkeit der Autos: ", self.anstellwahrscheinlichkeit, lambda: self.floataendern()],
+        self.einstellungenOptionen =  [["Grünphasenlängen: ", self.gruenphasenlaenge , lambda: self.integerlisteaendern()], 
+                                       ["Anstellwahrscheinlichkeit der Autos: ", self.anstellwahrscheinlichkeit, lambda: self.floatlisteaendern()],
                                        ["Anstellintervall der Autos:", self.pruefinterall, lambda: self.integeraendern()],
                                        ["Durchschnittliche Abarbeitungsdauer pro Auto: ", self.sekundenProAuto, lambda: self.integeraendern()],
                                        ["Verzögerung der seitlichen Ampeln: ", self.verzoegerung, lambda: self.floataendern()],
@@ -281,7 +306,7 @@ class Ampelkreuzung(object):
         for warteschlange in self.warteschlangen:
             self.nummer = round(random.random(), 1)
             #Wenn die generierte Zahl kleiner gleich als die Wahrscheinlichkeit ist, dann wird ein neues Auto angestellt
-            if self.nummer <= self.anstellwahrscheinlichkeit:                                              
+            if self.nummer <= warteschlange.anstellwahrscheinlichkeit:
                 warteschlange.anhaengen(random.randint(self.sekundenProAuto - 1, self.sekundenProAuto+ 1)) 
            
     def ausgabe(self):
@@ -303,7 +328,7 @@ class Ampelkreuzung(object):
             return zahl
         else:
             return durchlaeufe
-            
+
 ampelkreuzung = Ampelkreuzung()
 ampelkreuzung.interface()
 

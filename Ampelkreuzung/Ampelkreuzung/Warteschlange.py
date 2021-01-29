@@ -22,26 +22,17 @@ class Warteschlange(object):
     """
 
     def __init__(self):
-        self.schlange = []
+        self.anstellWahrscheinlichkeiten = 0.5
+        self.abgearbeitetautos = 0
         self.warteschlangename = ""
         self.inprozess = False
-        self.abgearbeitetautos = 0
-        
-    def anhaengen(self, laenge):
-        self.schlange.append(laenge)
+        self.schlange = []
 
     #Ermöglicht das Abarbeiten als Hintergrundaktion
     def abarbeitenstarten(self):
         if(self.inprozess == False):
             self.inprozess = True
             threading._start_new_thread(self.abarbeiten)
-
-    def hinzufuegen(self, index):   
-        self.schlange.insert(index)
-
-    #Löscht bestimmte Elemente in der Liste 
-    def loeschen(self, index):   
-        self.schlange.pop(index)
 
     #Entfernt das erste Element(autos) aus der Warteschlange
     def abarbeiten(self):
