@@ -206,6 +206,10 @@ class Ampelkreuzung(object):
         self.einstellungenuebernehmen()
         for optionindex in range(len(self.einstellungenOptionen)):
             print(f"({optionindex}) {self.einstellungenOptionen[optionindex][0]}{self.einstellungenOptionen[optionindex][1]}")
+
+        print("\nHinweis bei Grünphasenlänge: \n[Mittlere Ampel(Straße A), Linke Ampel(Straße A), Mittlere Ampel(Straße B), Linke Ampel(Straße B)]");
+        print("Hinweis bei Anstellwahrscheinlichkeit: \n[Straße A, Straße B]");
+
         try:
             self.eingabe = int(input("\nWähle Option: "))
             self.einstellungenOptionen[self.eingabe][1] = self.einstellungenOptionen[self.eingabe][2]()
