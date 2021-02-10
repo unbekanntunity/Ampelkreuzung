@@ -1,9 +1,7 @@
 #-------------------------------------------------------------------------------
 # Name:        Timer
 # Purpose:     Zeituhr
-#
 # Author:      T.nguyen, T. Rothe 
-#
 # Created:     13.01.2021
 # Modified:    26.01.2021
 # Copyright:   (c) an.nguyen 2020

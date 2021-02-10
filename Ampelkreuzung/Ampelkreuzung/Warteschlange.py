@@ -22,11 +22,11 @@ class Warteschlange(object):
     """
 
     def __init__(self):
-        self.anstellwahrscheinlichkeit = 0.5
-        self.abgearbeitetautos = 0
         self.warteschlangename = ""
-        self.inprozess = False
         self.schlange = []
+        self.inprozess = False
+        self.abgearbeitetautos = 0
+        self.anstellwahrscheinlichkeit = 0.5
 
     def anhaengen(self, element):
         self.schlange.append(element)

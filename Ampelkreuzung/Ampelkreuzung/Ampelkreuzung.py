@@ -13,6 +13,7 @@ import Ampel
 import Warteschlange 
 import random
 import Timer
+import pickle
 
 class Ampelkreuzung(object):
     """
@@ -34,7 +35,7 @@ class Ampelkreuzung(object):
         self.ampeln = []
         self.ampelnamen = ["AmpelA11(mitte)", "AmpelA21(mitte)", "AmpelA12(links)", "AmpelA21(links)", "AmpelB11(mitte)", "AmpelB21(mitte)", "AmpelB12(links)", "AmpelB21(links)"]
         self.warteschlangennamen = ["A11(mitte)", "A21(mitte)", "A12(links)", "A21(links)", "B11(mitte)", "B21(mitte)", "B12(links)", "B22(links)"]
-        self.optionen = [["Simulation starten", lambda: self.starten()],["Einstellungen", lambda: self.einstellungen()]]
+        self.optionen = [["Simulation starten", lambda: self.starten()],["Einstellungen", lambda: self.einstellungen()], ["Programm beenden", lambda: self.programmBeenden()]]
 
         self.nummer = 0
         self.durchlaeufe = -1
@@ -42,6 +43,7 @@ class Ampelkreuzung(object):
         self.gruenphasendurchlauefe = 0
         self.eingabe = ""
         self.pruefinterall = 1
+        self.datenVorhanden = False
         self.fertig = False
         self.eingabeBeendet = False
         self.standarteinstellungen = True
@@ -66,6 +68,14 @@ class Ampelkreuzung(object):
         for index in range(len(self.ampeln)):
             self.ampeln[index].gruenphasenlaenge.clear()
             self.ampeln[index].rotphasenlaenge.clear()
+        
+        #Anstellwahrscheinlichkeiten
+        if(len(self.anstellwahrscheinlichkeit) > 1):
+            for warteschlangeIndex in range(len(self.warteschlangen)):
+                self.warteschlangen[warteschlangeIndex].anstellwahrscheinlichkeit = self.anstellwahrscheinlichkeit[int(warteschlangeIndex / 4)]
+        else:
+            for warteschlangeIndex in range(len(self.warteschlangen)):
+                self.warteschlangen[warteschlangeIndex].anstellwahrscheinlichkeit = self.anstellwahrscheinlichkeit[0]
 
         #Eingabe überprüfen
         if(len(self.gruenphasenlaenge) % 4 != 0 and len(self.gruenphasenlaenge) != 1):
@@ -86,13 +96,6 @@ class Ampelkreuzung(object):
             for i in range(4 - 1):
                 self.gruenphasenlaenge.append(self.gruenphasenlaenge[0])
 
-        #Anstellwahrscheinlichkeiten
-        if(len(self.anstellwahrscheinlichkeit) > 1):
-            for warteschlangeIndex in range(len(self.warteschlangen)):
-                self.warteschlangen[warteschlangeIndex].anstellwahrscheinlichkeit = self.anstellwahrscheinlichkeit[int(warteschlangeIndex / 4)]
-        else:
-            for warteschlangeIndex in range(len(self.warteschlangen)):
-                self.warteschlangen[warteschlangeIndex].anstellwahrscheinlichkeit = self.anstellwahrscheinlichkeit[0]
 
         #Grünphasenkalkulation für den ersten Durchlauf
         for ampelindex in range(len(self.gruenphasenlaenge[:4])):
@@ -187,10 +190,6 @@ class Ampelkreuzung(object):
         for i in range(len(self.optionen)):
             print("%0s %3s" %(f"({i})",f"{self.optionen[i][0]}"))
 
-        if(self.standarteinstellungen):
-            print("\n> Standarteinstellung werden verwendet!")
-        else:
-            print("\n> angepasste Einstellungen werden verwendet!")
         try:
             self.eingabe = int(input("\nWähle Option:"))
             self.optionen[self.eingabe][1]()
@@ -198,17 +197,21 @@ class Ampelkreuzung(object):
             print(f"Bitte nur Zahlen zwischen 0 und {len(self.optionen)}")
             self.interface()
 
+    def programmBeenden(self):
+        print("\nProgramm wird beendet...\n")
+
     #Einstellungen für die Simulation
     def einstellungen(self):
         print("")
 
         self.standarteinstellungen = False
         self.einstellungenuebernehmen()
+
         for optionindex in range(len(self.einstellungenOptionen)):
             print(f"({optionindex}) {self.einstellungenOptionen[optionindex][0]}{self.einstellungenOptionen[optionindex][1]}")
 
         print("\nHinweis bei Grünphasenlänge: \n[Mittlere Ampel(Straße A), Linke Ampel(Straße A), Mittlere Ampel(Straße B), Linke Ampel(Straße B)]");
-        print("Hinweis bei Anstellwahrscheinlichkeit: \n[Straße A, Straße B]");
+        print("\nHinweis bei Anstellwahrscheinlichkeit: \n[Straße A, Straße B]");
 
         try:
             self.eingabe = int(input("\nWähle Option: "))
@@ -218,6 +221,34 @@ class Ampelkreuzung(object):
 
         if(self.fertig == False):
             self.einstellungen()
+
+    def einstellungenuebernehmen(self):
+        with open("Save.txt", "rb") as f:
+            self.datenVorhanden = pickle.load(f)
+
+        if(self.datenVorhanden):
+            self.datenLaden()
+
+        if(len(self.einstellungenOptionen) > 0):
+            self.gruenphasenlaenge = self.einstellungenOptionen[0][1]
+            self.anstellwahrscheinlichkeit = self.einstellungenOptionen[1][1]
+            self.pruefinterall = self.einstellungenOptionen[2][1]
+            self.sekundenProAuto = self.einstellungenOptionen[3][1]
+            self.verzoegerung =  self.einstellungenOptionen[4][1]
+            self.ausgabegeschwindigkeit = self.einstellungenOptionen[5][1]
+            self.maxdurchlaufe = self.einstellungenOptionen[6][1]
+            self.stoppuhr2 = Timer.Stoppuhr(self.ausgabegeschwindigkeit)
+        
+        self.einstellungenOptionen =  [["Grünphasenlängen: ", self.gruenphasenlaenge , lambda: self.integerlisteaendern()], 
+                                       ["Anstellwahrscheinlichkeit der Autos: ", self.anstellwahrscheinlichkeit, lambda: self.floatlisteaendern()],
+                                       ["Anstellintervall der Autos: ", self.pruefinterall, lambda: self.integeraendern()],
+                                       ["Durchschnittliche Abarbeitungsdauer pro Auto: ", self.sekundenProAuto, lambda: self.integeraendern()],
+                                       ["Verzögerung der seitlichen Ampeln: ", self.verzoegerung, lambda: self.floataendern()],
+                                       ["Ausgaben pro Sekunde: ", self.ausgabegeschwindigkeit, lambda: self.floataendern()],
+                                       ["Durchläufe: ", self.maxdurchlaufe, lambda: self.integeraendern()],
+                                       ["Zurück zum Hauptmenü: ", "", lambda: self.hauptmenu()]]
+        self.datenVorhanden = True
+        self.datenSpeichern()
 
     #Eine Eingabeschleife, die Eingabe des Benutzers in einer Liste speichert und erst abgebrochen wird, wenn der Benutzer den Buchstaben `e` eingibt
     def integerlisteaendern(self):
@@ -284,34 +315,14 @@ class Ampelkreuzung(object):
         return ""
 
     #Hier werden alle Variablen überschrieben und aktualisiert
-    def einstellungenuebernehmen(self):
 
-        if(len(self.einstellungenOptionen) > 0):
-            self.gruenphasenlaenge = self.einstellungenOptionen[0][1]
-            self.anstellwahrscheinlichkeit = self.einstellungenOptionen[1][1]
-            self.pruefinterall = self.einstellungenOptionen[2][1]
-            self.sekundenProAuto = self.einstellungenOptionen[3][1]
-            self.verzoegerung =  self.einstellungenOptionen[4][1]
-            self.ausgabegeschwindigkeit = self.einstellungenOptionen[5][1]
-            self.maxdurchlaufe = self.einstellungenOptionen[6][1]
-            self.stoppuhr2 = Timer.Stoppuhr(self.ausgabegeschwindigkeit)
-        
-        self.einstellungenOptionen =  [["Grünphasenlängen: ", self.gruenphasenlaenge , lambda: self.integerlisteaendern()], 
-                                       ["Anstellwahrscheinlichkeit der Autos: ", self.anstellwahrscheinlichkeit, lambda: self.floatlisteaendern()],
-                                       ["Anstellintervall der Autos: ", self.pruefinterall, lambda: self.integeraendern()],
-                                       ["Durchschnittliche Abarbeitungsdauer pro Auto: ", self.sekundenProAuto, lambda: self.integeraendern()],
-                                       ["Verzögerung der seitlichen Ampeln: ", self.verzoegerung, lambda: self.floataendern()],
-                                       ["Ausgaben pro Sekunde: ", self.ausgabegeschwindigkeit, lambda: self.floataendern()],
-                                       ["Durchläufe: ", self.maxdurchlaufe, lambda: self.integeraendern()],
-                                       ["Zurück zum Hauptmenü: ", "", lambda: self.hauptmenu()]]
- 
     def autoanstellen(self):
         #Generiert eine zufällige zahl für warscheinlichkeit des anstellens
         for warteschlange in self.warteschlangen:
             self.nummer = round(random.random(), 1)
             #Wenn die generierte Zahl kleiner gleich als die Wahrscheinlichkeit ist, dann wird ein neues Auto angestellt
             if self.nummer <= warteschlange.anstellwahrscheinlichkeit:
-                warteschlange.anhaengen(random.randint(self.sekundenProAuto - 1, self.sekundenProAuto+ 1)) 
+                warteschlange.anhaengen(random.randint(self.sekundenProAuto - 1, self.sekundenProAuto + 1)) 
            
     def ausgabe(self):
         print("")
@@ -333,6 +344,32 @@ class Ampelkreuzung(object):
         else:
             return durchlaeufe
 
+    #Speichert die Daten in eine externe Datei 
+    def datenSpeichern(self):
+        with open("Save.txt", "wb") as f:
+            pickle.dump(self.datenVorhanden, f)
+            pickle.dump(self.gruenphasenlaenge, f)
+            pickle.dump(self.anstellwahrscheinlichkeit, f)
+            pickle.dump(self.pruefinterall, f)
+            pickle.dump(self.sekundenProAuto, f)
+            pickle.dump(self.verzoegerung, f)
+            pickle.dump(self.ausgabegeschwindigkeit, f)
+            pickle.dump(self.maxdurchlaufe, f)
+    
+    #Speichert die Daten in eine externe Datei 
+    def datenLaden(self):
+        with open("Save.txt", "rb") as f:
+            self.daten = pickle.load(f)
+            self.gruenphasenlaenge = pickle.load(f)
+            self.anstellwahrscheinlichkeit = pickle.load(f)
+            self.pruefinterall = pickle.load(f)
+            self.sekundenProAuto = pickle.load(f)
+            self.verzoegerung = pickle.load(f)
+            self.ausgabegeschwindigkeit = pickle.load(f)
+            self.maxdurchlaufe = pickle.load(f)
+
 ampelkreuzung = Ampelkreuzung()
 ampelkreuzung.interface()
+
+
 

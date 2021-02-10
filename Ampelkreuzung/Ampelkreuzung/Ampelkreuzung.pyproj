@@ -26,6 +26,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ampelkreuzung.py" />
+    <Compile Include="SaveData.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Timer.py">
       <SubType>Code</SubType>
     </Compile>

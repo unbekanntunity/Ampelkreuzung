@@ -27,11 +27,11 @@ class Ampel(thread.Thread):
         #Besitzt jeweils einen eigenen unabhängigen Timer, der für den Wechsel der Rot-Grünphasen verantwortlich ist
         thread.Thread.__init__(self)
         self.timer = Timer.Stoppuhr(1)
+        self.ampelname = ""
         self.alive = False
         self.zustand = "Rot"              
         self.rotphasenlaenge = []
         self.gruenphasenlaenge = []
-        self.ampelname = ""
         self.index = 0
 
     #Schaltet die Ampel um
