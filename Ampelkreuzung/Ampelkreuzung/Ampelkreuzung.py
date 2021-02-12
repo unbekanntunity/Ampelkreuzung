@@ -4,7 +4,7 @@
 #
 # Author:      T.nguyen, T. Rothe 
 # Created:     13.01.2021
-# Modified:    26.01.2021
+# Modified:    12.02.2021
 # Copyright:   (c) an.nguyen 2020
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
@@ -148,6 +148,7 @@ class Ampelkreuzung(object):
             print(f"\n{gruenphasenlaengeausgabe}")
             print(f"{rotphasenlaengeausgabe}")
 
+        #Stoppuhren werden gestartet
         self.ampelNullGruen = False
         self.stoppuhr.start()
         for ampelIndex in range(len(self.ampeln)):
@@ -157,20 +158,24 @@ class Ampelkreuzung(object):
         #Simulationsprozess
         while(self.fertig == False):
 
+            #Sorgt für die Ausgabe
             if(self.stoppuhr2.zeit() >= self.ausgabegeschwindigkeit):
                 self.ausgabe()
                 self.stoppuhr2.zuruecksetzen()
 
+            #Überprüft den Zustand der ersten Ampel
             if(self.ampeln[0].zustand == "Rot" and self.ampelNullGruen):
                 self.durchlaeufe += 1
                 self.ampelNullGruen = False
 
+            #Überprüft den Zustand der Ampeln und wenn die Grün ist, werden die Autos abgearbeitet
             for index in range(len(self.ampeln)):
                 if(self.ampeln[index].zustand == "Grün"):
                     self.warteschlangen[index].abarbeitenstarten()
                     if(index == 0):
                         self.ampelNullGruen = True
 
+            #Letzte Ausgabe und Beendigung der Threads
             if(self.durchlaeufe == self.maxdurchlaufe):
                 self.fertig = True
                 self.stoppuhr.finish()
@@ -213,6 +218,7 @@ class Ampelkreuzung(object):
         print("\nHinweis bei Grünphasenlänge: \n[Mittlere Ampel(Straße A), Linke Ampel(Straße A), Mittlere Ampel(Straße B), Linke Ampel(Straße B)]");
         print("\nHinweis bei Anstellwahrscheinlichkeit: \n[Straße A, Straße B]");
 
+        #Nimmt den Input und ruft dann die zugehörige Funktion in der Liste ab
         try:
             self.eingabe = int(input("\nWähle Option: "))
             self.einstellungenOptionen[self.eingabe][1] = self.einstellungenOptionen[self.eingabe][2]()
@@ -223,12 +229,15 @@ class Ampelkreuzung(object):
             self.einstellungen()
 
     def einstellungenuebernehmen(self):
+
+        #Überprüft, ob Daten vorhanden sind
         with open("Save.txt", "rb") as f:
             self.datenVorhanden = pickle.load(f)
 
         if(self.datenVorhanden):
             self.datenLaden()
 
+        #Variablen werden mit den Werten in den Listen überschrieben, aber nur wenn welche da sind, was am Anfang nicht der Fall ist
         if(len(self.einstellungenOptionen) > 0):
             self.gruenphasenlaenge = self.einstellungenOptionen[0][1]
             self.anstellwahrscheinlichkeit = self.einstellungenOptionen[1][1]
@@ -247,6 +256,8 @@ class Ampelkreuzung(object):
                                        ["Ausgaben pro Sekunde: ", self.ausgabegeschwindigkeit, lambda: self.floataendern()],
                                        ["Durchläufe: ", self.maxdurchlaufe, lambda: self.integeraendern()],
                                        ["Zurück zum Hauptmenü: ", "", lambda: self.hauptmenu()]]
+        
+        #Daten werden gespeichert 
         self.datenVorhanden = True
         self.datenSpeichern()
 
