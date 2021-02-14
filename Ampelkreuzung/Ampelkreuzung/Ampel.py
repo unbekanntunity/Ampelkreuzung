@@ -2,8 +2,8 @@
 # Name:        Ampel
 # Purpose:     Allgemeines Objekt für eine Ampel
 # Author:      T.nguyen, T. Rothe 
-# Created:     13.01.2021
-# Modified:    26.01.2021
+# Created:     26.01.2021
+# Modified:    13.01.2021
 # Copyright:   (c) an.nguyen 2020
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
@@ -35,11 +35,13 @@ class Ampel(thread.Thread):
         self.index = 0
 
     #Schaltet die Ampel um
-    def umschalten(self):                 #von grün nach rot (grün = true)
+    def umschalten(self):                 
+        #von grün nach rot 
         if(self.zustand == "Grün"):
             self.indexerhoehen()
-            self.zustand = "Rot"          #Timer wird zurückgesetzt
-            self.timer.zuruecksetzen()    #von rot nach grün
+            self.zustand = "Rot"          
+            self.timer.zuruecksetzen()    
+        #von rot nach grün
         else:                      
             self.indexerhoehen()
             self.zustand = "Grün"

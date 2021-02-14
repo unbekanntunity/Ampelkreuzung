@@ -4,7 +4,7 @@
 #
 # Author:      T.nguyen, T. Rothe 
 # Created:     13.01.2021
-# Modified:    12.02.2021
+# Modified:    13.01.2021
 # Copyright:   (c) an.nguyen 2020
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
@@ -54,6 +54,9 @@ class Ampelkreuzung(object):
         self.stoppuhr2 = Timer.Stoppuhr(0.1)
 
     def starten(self):
+        print(self.maxdurchlaufe)
+
+
         # Erstellen der Objekten
         for warteschlangeIndex in range(8):
             warteschlange = Warteschlange.Warteschlange()
@@ -78,24 +81,26 @@ class Ampelkreuzung(object):
                 self.warteschlangen[warteschlangeIndex].anstellwahrscheinlichkeit = self.anstellwahrscheinlichkeit[0]
 
         #Eingabe überprüfen
+        #Eingaben werden in 4er blöcken gelesen und je nach Fall mit zusätzlichen Elementen aufgefüllt, falls nötig
         if(len(self.gruenphasenlaenge) % 4 != 0 and len(self.gruenphasenlaenge) != 1):
             self.indexletztezahl = len(self.gruenphasenlaenge) % 4 
             self.gruenphasendurchlauefe = self.faktorfinden(4, len(self.gruenphasenlaenge), False)
-            print(self.gruenphasendurchlauefe)
+            #Füllt fehlenden Stellen mit Nullen auf, danit man darauf später zugreifen kann. Verhindert IndexOutOfBoundsException
             for index in range(4 - self.indexletztezahl):
                 self.gruenphasenlaenge.append(0)
             for index in range((self.gruenphasendurchlauefe * 4 ) + self.indexletztezahl, (self.gruenphasendurchlauefe * 4) + 4, 1):
+                #Wenn die Eingabe länger als ein 4er-Blöcken, dann wird die fehlende Zahl mit der in der vorherigen Zahl ersetzt
                 if(self.gruenphasendurchlauefe > 0):
                     self.gruenphasenlaenge[index] = self.gruenphasenlaenge[index - 4]
+                elif index < 2:
+                    self.gruenphasenlaenge[index] = self.gruenphasenlaenge[index + 2]
                 else:
-                    try:
-                        self.gruenphasenlaenge[index] = self.gruenphasenlaenge[index + 2]
-                    except:
-                        self.gruenphasenlaenge[index] = self.gruenphasenlaenge[index - 2]
+                    self.gruenphasenlaenge[index] = self.gruenphasenlaenge[index - 2]
+
+        #Überprüft, ob nur eine Zahl eingegeben wurde. Wenn ja dann wird alles mit der Zahl aufgefüllt.
         elif(len(self.gruenphasenlaenge) == 1):
             for i in range(4 - 1):
                 self.gruenphasenlaenge.append(self.gruenphasenlaenge[0])
-
 
         #Grünphasenkalkulation für den ersten Durchlauf
         for ampelindex in range(len(self.gruenphasenlaenge[:4])):
@@ -191,10 +196,13 @@ class Ampelkreuzung(object):
 
     #Hauptmemü
     def interface(self):
+        #Lädt erste die Variablen. Sowohl die globalen als auch die in der Einstellungslisten
+        self.einstellungenuebernehmen()
+        #Ausgabe
         print("")
         for i in range(len(self.optionen)):
             print("%0s %3s" %(f"({i})",f"{self.optionen[i][0]}"))
-
+        #Fragt den Benutzer nach der gewünschten Option und führt die dazugehörige Methode aus
         try:
             self.eingabe = int(input("\nWähle Option:"))
             self.optionen[self.eingabe][1]()
@@ -207,11 +215,13 @@ class Ampelkreuzung(object):
 
     #Einstellungen für die Simulation
     def einstellungen(self):
-        print("")
-
+        
+        #Lädt erste die Variablen. Sowohl die globalen als auch die in der Einstellungslisten
         self.standarteinstellungen = False
         self.einstellungenuebernehmen()
 
+        #Ausgabe der Optionen
+        print("")
         for optionindex in range(len(self.einstellungenOptionen)):
             print(f"({optionindex}) {self.einstellungenOptionen[optionindex][0]}{self.einstellungenOptionen[optionindex][1]}")
 
@@ -225,9 +235,11 @@ class Ampelkreuzung(object):
         except:
             print(f"Bitte nur Zahlen zwischen 0 und {len(self.einstellungenOptionen)}")
 
+        #Überprüft ob die Simulation zuende ist, da sonst diese Funktion am Ende nochmal aufgerufen wird
         if(self.fertig == False):
             self.einstellungen()
 
+    #Lädt und speichert die Daten
     def einstellungenuebernehmen(self):
 
         #Überprüft, ob Daten vorhanden sind
@@ -248,6 +260,7 @@ class Ampelkreuzung(object):
             self.maxdurchlaufe = self.einstellungenOptionen[6][1]
             self.stoppuhr2 = Timer.Stoppuhr(self.ausgabegeschwindigkeit)
         
+        #Einstellungsliste mit Anzeige, Variable und Methode die aufgerufen wird, wenn die Option gewählt wird
         self.einstellungenOptionen =  [["Grünphasenlängen: ", self.gruenphasenlaenge , lambda: self.integerlisteaendern()], 
                                        ["Anstellwahrscheinlichkeit der Autos: ", self.anstellwahrscheinlichkeit, lambda: self.floatlisteaendern()],
                                        ["Anstellintervall der Autos: ", self.pruefinterall, lambda: self.integeraendern()],
@@ -260,40 +273,33 @@ class Ampelkreuzung(object):
         #Daten werden gespeichert 
         self.datenVorhanden = True
         self.datenSpeichern()
-
-    #Eine Eingabeschleife, die Eingabe des Benutzers in einer Liste speichert und erst abgebrochen wird, wenn der Benutzer den Buchstaben `e` eingibt
+    
+    #Funktion um eine Liste zu überschreiben
     def integerlisteaendern(self):
         index = 0
         eingabe = ""
         liste = []
-        
+        #Eine Eingabeschleife, die Eingabe des Benutzers in einer Liste speichert und erst abgebrochen wird, wenn der Benutzer den Buchstaben `e` eingibt
         while(self.eingabeBeendet == False):
             eingabe = input(f"\nIndex {index + 1}: ")
             if(eingabe == "e" and len(self.gruenphasenlaenge) > 0):
                 return liste
-            if(index == 3):
-                index = 0
-            else: 
-                index += 1
             try:
                 liste.append(int(eingabe))
             except:
                 print("Bitte nur ganze Zahlen oder `e` eingeben")
                 self.listeaendern()
 
+    #Funktion um eine Liste zu überschreiben
     def floatlisteaendern(self):
         index = 0
         eingabe = ""
         liste = []
-        
+        #Eine Eingabeschleife, die Eingabe des Benutzers in einer Liste speichert und erst abgebrochen wird, wenn der Benutzer den Buchstaben `e` eingibt
         while(self.eingabeBeendet == False):
             eingabe = input(f"\nIndex {index + 1}: ")
             if(eingabe == "e" and len(self.gruenphasenlaenge) > 0):
                 return liste
-            if(index == 3):
-                index = 0
-            else: 
-                index += 1
             try:
                 liste.append(float(eingabe))
             except:
@@ -311,6 +317,7 @@ class Ampelkreuzung(object):
             print("Bitte nur ganze Zahlen eingeben")
             self.integeraendern()
 
+    #Funktionen, die die Eingabe des Benutzers zurückgeben, wenn diese den Typ entspricht
     def floataendern(self):
         try:
             eingabe = float(input("Neuer Wert: "))
@@ -321,11 +328,10 @@ class Ampelkreuzung(object):
             print("Bitte nur Zahlen eingeben")
             self.floataendern()
 
+    #Funltion um ins Hauptmenü zurückzukehren
     def hauptmenu(self):
         self.interface()
         return ""
-
-    #Hier werden alle Variablen überschrieben und aktualisiert
 
     def autoanstellen(self):
         #Generiert eine zufällige zahl für warscheinlichkeit des anstellens
@@ -334,7 +340,8 @@ class Ampelkreuzung(object):
             #Wenn die generierte Zahl kleiner gleich als die Wahrscheinlichkeit ist, dann wird ein neues Auto angestellt
             if self.nummer <= warteschlange.anstellwahrscheinlichkeit:
                 warteschlange.anhaengen(random.randint(self.sekundenProAuto - 1, self.sekundenProAuto + 1)) 
-           
+
+    #Ausgabe der Warteschlangen- und Ampelzuständen           
     def ausgabe(self):
         print("")
         print("-" * 10)
@@ -370,7 +377,7 @@ class Ampelkreuzung(object):
     #Speichert die Daten in eine externe Datei 
     def datenLaden(self):
         with open("Save.txt", "rb") as f:
-            self.daten = pickle.load(f)
+            self.datenVorhanden = pickle.load(f)
             self.gruenphasenlaenge = pickle.load(f)
             self.anstellwahrscheinlichkeit = pickle.load(f)
             self.pruefinterall = pickle.load(f)

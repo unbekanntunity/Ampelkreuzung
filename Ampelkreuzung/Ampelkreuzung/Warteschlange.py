@@ -3,7 +3,7 @@
 # Purpose:     Allgemeines Objekt für eine Wartscheschlange
 # Author:      T.nguyen, T. Rothe 
 # Created:     09.12.2020
-# Modified:    26.01.2021
+# Modified:    13.01.2021
 # Copyright:   (c) an.nguyen 2020
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
@@ -28,6 +28,7 @@ class Warteschlange(object):
         self.abgearbeitetautos = 0
         self.anstellwahrscheinlichkeit = 0.5
 
+    #Hängt ein übergebenes Element in die Liste an
     def anhaengen(self, element):
         self.schlange.append(element)
 

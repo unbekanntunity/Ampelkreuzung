@@ -3,7 +3,7 @@
 # Purpose:     Zeituhr
 # Author:      T.nguyen, T. Rothe 
 # Created:     13.01.2021
-# Modified:    26.01.2021
+# Modified:    13.01.2021
 # Copyright:   (c) an.nguyen 2020
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
@@ -30,6 +30,7 @@ class Stoppuhr(thread.Thread):
         self.ampelkreuzung = None
         self.alive = False
 
+    #Wird jeden Fram aufgreufen bis der Thread mit obj.finish() beendet wird
     def run(self):
         self.alive = True   
         self.letzterWert = self.value
