@@ -54,9 +54,6 @@ class Ampelkreuzung(object):
         self.stoppuhr2 = Timer.Stoppuhr(0.1)
 
     def starten(self):
-        print(self.maxdurchlaufe)
-
-
         # Erstellen der Objekten
         for warteschlangeIndex in range(8):
             warteschlange = Warteschlange.Warteschlange()
@@ -215,7 +212,6 @@ class Ampelkreuzung(object):
 
     #Einstellungen für die Simulation
     def einstellungen(self):
-        
         #Lädt erste die Variablen. Sowohl die globalen als auch die in der Einstellungslisten
         self.standarteinstellungen = False
         self.einstellungenuebernehmen()
@@ -241,7 +237,6 @@ class Ampelkreuzung(object):
 
     #Lädt und speichert die Daten
     def einstellungenuebernehmen(self):
-
         #Überprüft, ob Daten vorhanden sind
         with open("Save.txt", "rb") as f:
             self.datenVorhanden = pickle.load(f)
@@ -277,8 +272,8 @@ class Ampelkreuzung(object):
     #Funktion um eine Liste zu überschreiben
     def integerlisteaendern(self):
         index = 0
-        eingabe = ""
         liste = []
+        eingabe = ""
         #Eine Eingabeschleife, die Eingabe des Benutzers in einer Liste speichert und erst abgebrochen wird, wenn der Benutzer den Buchstaben `e` eingibt
         while(self.eingabeBeendet == False):
             eingabe = input(f"\nIndex {index + 1}: ")
@@ -293,8 +288,8 @@ class Ampelkreuzung(object):
     #Funktion um eine Liste zu überschreiben
     def floatlisteaendern(self):
         index = 0
-        eingabe = ""
         liste = []
+        eingabe = ""
         #Eine Eingabeschleife, die Eingabe des Benutzers in einer Liste speichert und erst abgebrochen wird, wenn der Benutzer den Buchstaben `e` eingibt
         while(self.eingabeBeendet == False):
             eingabe = input(f"\nIndex {index + 1}: ")
